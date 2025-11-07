@@ -1,6 +1,5 @@
 {
     "crons": [
-      { "path": "/api/cron/promote", "schedule": "*/1 * * * *" },
-      { "path": "/api/cron/openalex", "schedule": "*/15 * * * *" }
-    ]
+  { "path": "/api/cron/promote", "schedule": "0 12 * * *" }
+]
   }
