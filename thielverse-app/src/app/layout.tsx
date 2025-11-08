@@ -12,7 +12,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <a href="/" className="text-lg font-semibold tracking-tight">
               Thielverse <span className="text-neutral-400">· Frontier Feed</span>
             </a>
+            // ...keep your current layout, just replace the <nav> with this:
+
+</nav>
+
             <nav className="hidden sm:flex gap-5 text-sm">
+              <a className="hover:text-white underline-offset-4 hover:underline" href="/oracle">Demo</a>
               <a className="hover:text-white underline-offset-4 hover:underline" href="/api/openapi.json" target="_blank">OpenAPI</a>
               <a className="hover:text-white underline-offset-4 hover:underline" href="/api/schema/receipt" target="_blank">Receipt Schema</a>
               <a className="hover:text-white underline-offset-4 hover:underline" href="/api/health" target="_blank">Health</a>
