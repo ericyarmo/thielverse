@@ -1,21 +1,231 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* subtle adjustments */
-:root {
-  --neutral-850: 26 26 26; /* custom */
+/* Tailwind v4 syntax - import additional color utilities */
+@theme {
+  --color-sky-500: #0ea5e9;
+  --color-sky-400: #38bdf8;
+  --color-emerald-500: #10b981;
+  --color-amber-500: #f59e0b;
+  --color-violet-500: #8b5cf6;
 }
 
-* { -webkit-tap-highlight-color: transparent; }
-a { @apply text-teal-300 hover:text-teal-200; }
+/* Base theme - pure black background, crisp white text */
+body {
+  background: #000;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
-/* table borders color */
-.border-neutral-850 { border-color: rgb(var(--neutral-850)); }
-.bg-neutral-900\/60 { background-color: rgb(23 23 23 / 0.6); }
+/* Paper utility for cards/panels */
+.paper {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+}
 
-/* extras */
-:root { --neutral-850: 26 26 26; }
-.border-neutral-850 { border-color: rgb(var(--neutral-850)); }
-a { @apply text-teal-300 hover:text-teal-200; }
-* { -webkit-tap-highlight-color: transparent; }
+/* Link styles - subtle sky blue accent */
+a {
+  color: rgba(255, 255, 255, 0.9);
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #38bdf8;
+}
+
+/* Header styles */
+.header-brand {
+  color: white;
+  text-decoration: none;
+}
+
+.header-brand:hover {
+  color: white;
+  opacity: 0.9;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.2);
+  text-underline-offset: 4px;
+  transition: all 0.2s;
+}
+
+.nav-link:hover {
+  color: white;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Filter pill styles - clean, minimal, high contrast */
+.filter-pill {
+  border-radius: 9999px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.15s ease;
+  letter-spacing: 0.025em;
+  text-decoration: none;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.filter-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.filter-pill.active {
+  background: white;
+  color: #000;
+  border-color: white;
+  font-weight: 500;
+}
+
+/* Modal and button styles */
+.modal-entity-link {
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  transition: all 0.15s ease;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.modal-entity-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.modal-close-btn {
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* AskBar styles - clean input with subtle focus ring */
+.ask-input {
+  flex: 1;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  color: white;
+  transition: all 0.15s ease;
+  outline: none;
+}
+
+.ask-input:focus {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
+
+.ask-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ask-button {
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+}
+
+.ask-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.ask-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Remove tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Typography rhythm - 24px/32px vertical spacing */
+.rhythm-24 > * + * {
+  margin-top: 1.5rem;
+}
+
+.rhythm-32 > * + * {
+  margin-top: 2rem;
+}
+
+/* Focus states for accessibility - sky blue accent */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.5);
+  outline-offset: 2px;
+}
+
+/* Color utilities for analysis sections - subtle, low contrast */
+.section-sky {
+  border-color: rgba(14, 165, 233, 0.2);
+  background: rgba(14, 165, 233, 0.04);
+}
+
+.section-emerald {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.04);
+}
+
+.section-amber {
+  border-color: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.section-violet {
+  border-color: rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.04);
+}
+
+/* Scrollbar styling (optional, minimal) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

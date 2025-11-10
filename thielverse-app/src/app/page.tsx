@@ -1,110 +1,108 @@
-export const dynamic = "force-dynamic";
+// thielverse-app/src/app/page.tsx
 
-import Counter from "./_counter";
-import AskBox from "./_askbox";
+import Header from "./components/Header";
+import FilterPills from "./components/FilterPills";
+import ReceiptTable, { ReceiptRow } from "./components/ReceiptTable";
+import { SearchBar } from "./components/SearchBar";
+import ViewControls from "./components/ViewControls";
+import { createClient } from "@supabase/supabase-js";
 
-async function getData(frontier?: string) {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const u = new URL(`${base}/api/receipts/enriched`);
-  if (frontier) u.searchParams.set("frontier", frontier);
-  u.searchParams.set("limit", "50");
-  const r = await fetch(u.toString(), { cache: "no-store" });
-  return r.json();
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_KEY!; // server-only
+
+const FRONTIERS = [
+  { key: undefined, label: "All" },
+  { key: "AI", label: "AI" },
+  { key: "Biotech", label: "Biotech" },
+  { key: "Crypto", label: "Crypto" },
+  { key: "Defense", label: "Defense" },
+  { key: "Energy", label: "Energy" },
+  { key: "Robotics", label: "Robotics" },
+  { key: "Frontier Founders", label: "Frontier Founders" },
+  { key: "Telecom", label: "Telecom" },
+];
+
+function safeHost(url?: string, fallback?: string) {
+  try {
+    return url ? new URL(url).host : fallback || "";
+  } catch {
+    return fallback || "";
+  }
 }
 
-export default async function Page(props: { searchParams: Promise<{ frontier?: string }> }) {
-  const { frontier: f } = await props.searchParams;
-  const rows: any[] = await getData(f);
-  const fronts = ["AI", "Energy", "Biotech", "Thielverse"];
+async function fetchData(frontier?: string, limit?: string, sort?: string) {
+  const sb = createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+
+  const limitNum = Math.min(Number(limit || 50), 200);
+  const ascending = sort === "asc";
+
+  const receiptsQ = sb
+    .from("receipts")
+    .select("source,title,url,published_at,frontier,cid", { count: "exact" })
+    .eq("visible", true)
+    .order("published_at", { ascending })
+    .limit(limitNum);
+  if (frontier) receiptsQ.eq("frontier", frontier);
+
+  const [{ data: receipts, count: rc }, { count: ac }, { count: ec }] =
+    await Promise.all([
+      receiptsQ,
+      sb.from("analyses").select("*", { count: "exact", head: true }),
+      sb.from("entities").select("slug", { count: "exact", head: true }),
+    ]);
+
+  const rows: ReceiptRow[] = (receipts || []).map((r) => ({
+    date: new Date(r.published_at).toISOString().slice(0, 10),
+    frontier: r.frontier ?? "",
+    source: safeHost(r.url, r.source),
+    title: r.title,
+    cid: r.cid ?? null,
+  }));
+
+  return {
+    rows,
+    counts: { receipts: rc ?? 0, analyses: ac ?? 0, entities: ec ?? 0 },
+  };
+}
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ f?: string; limit?: string; sort?: string }>;
+}) {
+  const sp = await searchParams;
+  const active = sp?.f;
+  const limit = sp?.limit;
+  const sort = sp?.sort;
+  const { rows, counts } = await fetchData(active, limit, sort);
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-2xl border border-neutral-800 bg-neutral-900/20 p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Frontier Feed</h1>
-        <p className="text-sm text-neutral-400 mt-1">
-          {Array.isArray(rows) ? rows.length : 0} receipts • public is 7-day delayed
-        </p>
-        <Counter />
-        <div className="mt-4 flex flex-wrap gap-2">
-          {fronts.map(x => {
-            const active = x === f;
-            return (
-              <a
-                key={x}
-                href={`/?frontier=${x}`}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  active
-                    ? "bg-teal-600/20 border-teal-500 text-teal-300"
-                    : "border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900"
-                }`}
-              >
-                {x}
-              </a>
-            );
-          })}
-          <a
-            href="/"
-            className={`px-3 py-1.5 rounded-full text-sm border transition ${
-              !f
-                ? "bg-teal-600/20 border-teal-500 text-teal-300"
-                : "border-neutral-800 hover:border-neutral-700 hover:bg-neutral-900"
-            }`}
-          >
-            All
-          </a>
-        </div>
-        <AskBox className="mt-4" />
-      </section>
+    <>
+      <Header counts={counts} />
 
-      <section className="overflow-hidden rounded-2xl border border-neutral-800">
-        <table className="w-full text-[13.5px] leading-5">
-          <thead className="bg-neutral-900/60 text-neutral-300">
-            <tr>
-              <th className="px-4 py-3 text-left w-[110px]">Date</th>
-              <th className="px-4 py-3 text-left w-[110px]">Frontier</th>
-              <th className="px-4 py-3 text-left w-[100px]">Source</th>
-              <th className="px-4 py-3 text-left">Title</th>
-              <th className="px-4 py-3 text-left w-[260px]">Entities</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(Array.isArray(rows) ? rows : []).map(r => (
-              <tr key={r.id} className="border-t border-neutral-850 hover:bg-neutral-900/40">
-                <td className="px-4 py-3 align-top tabular-nums">{new Date(r.published_at).toISOString().slice(0,10)}</td>
-                <td className="px-4 py-3 align-top">
-                  <span className="rounded-md border border-neutral-800 px-2 py-0.5 text-xs text-neutral-300">{r.frontier}</span>
-                </td>
-                <td className="px-4 py-3 align-top text-neutral-300">{r.source}</td>
-                <td className="px-4 py-3 align-top">
-                  <a className="underline decoration-neutral-500 hover:decoration-teal-400" href={r.url} target="_blank" rel="noreferrer">
-                    {r.title}
-                  </a>
-                </td>
-                <td className="px-4 py-3 align-top">
-                  <div className="flex flex-wrap gap-2">
-                    {(r.entities || []).map((e: any) => (
-                      <a
-                        key={e.slug}
-                        href={`/entity/${e.slug}`}
-                        className="rounded-md border border-neutral-800 px-2 py-1 hover:border-neutral-700 hover:bg-neutral-900"
-                      >
-                        {e.name}
-                      </a>
-                    ))}
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {(!rows || rows.length === 0) && (
-              <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-neutral-400">
-                  No receipts yet. Seed a few and refresh.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </section>
-    </div>
+      {/* Search */}
+      <div className="mt-8" style={{ maxWidth: "42rem" }}>
+        <SearchBar />
+      </div>
+
+      <div className="mt-8 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight text-white">
+          Frontier Feed
+        </h1>
+        <div className="text-xs text-white/55">
+          Public view delayed 7 days
+        </div>
+      </div>
+
+      {/* View Controls */}
+      <div className="mt-5 flex items-center justify-between">
+        <FilterPills items={FRONTIERS} active={active} />
+        <ViewControls limit={limit} sort={sort} frontier={active} />
+      </div>
+
+      <div className="paper mt-6 overflow-hidden">
+        <ReceiptTable rows={rows} />
+      </div>
+    </>
   );
 }

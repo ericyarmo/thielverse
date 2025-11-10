@@ -1,0 +1,57 @@
+# adapters.yml — registry of sources (extend to hundreds over time)
+- id: openai-blog
+  frontier: AI
+  kind: rss
+  endpoint: https://openai.com/blog/rss.xml
+  license: CC-BY
+  rate_limit: 600/10m
+  maintainer: core
+  link_hints: ["openai","sama"]
+
+- id: anthropic-news
+  frontier: AI
+  kind: rss
+  endpoint: https://www.anthropic.com/news/rss.xml
+  license: CC-BY
+  rate_limit: 600/10m
+  maintainer: core
+  link_hints: ["anthropic"]
+
+- id: helion-blog
+  frontier: Energy
+  kind: rss
+  endpoint: https://www.helionenergy.com/feed/
+  license: Public
+  rate_limit: 600/10m
+  maintainer: core
+  link_hints: ["helion"]
+
+- id: altos-news
+  frontier: Biotech
+  kind: rss
+  endpoint: https://www.altoslabs.com/news/feed/
+  license: Public
+  rate_limit: 600/10m
+  maintainer: core
+  link_hints: ["altos"]
+
+# Example JSON API adapter
+- id: sec-latest-8k
+  frontier: Thielverse
+  kind: json
+  endpoint: https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=8-K&output=atom
+  license: Public
+  rate_limit: 120/10m
+  maintainer: core
+  link_hints: ["openai","tesla"]
+
+# (optional) HTML scrape adapter — use sparingly, respect robots.txt
+- id: mit-news
+  frontier: AI
+  kind: html
+  endpoint: https://news.mit.edu/topic/artificial-intelligence2
+  selector: article a
+  license: CC-BY
+  rate_limit: 60/10m
+  maintainer: core
+  link_hints: ["mit"]

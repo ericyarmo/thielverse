@@ -137,6 +137,15 @@ Changelog lives at end of this file with timestamp + signature.
 ---
 
 ## 14. Changelog
+2025-11-07 - began real ingestion today.
+Local: dark Tailwind skin functional
+Prod: serving legacy layout (SSR style)
+Cause: likely missing / unbuilt `globals.css` or stale `.next/` build on Vercel
+Fix plan: ensure tailwind config + globals.css deployed, run `npm run build && npm run start` locally to confirm parity
+feat(ui): dark theme + table polish
+feat(api): /stats live counter
+feat(data): seed 20 real receipts via RSS adapter
+docs: add running ingest script + env notes
 2025-11-06 — v2 rewritten as meta-agent manifest.  
 Agent self-description complete; ready for autonomous build loop.
 build: add supabase client + tsx; begin receipts API

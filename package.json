@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "@ipld/dag-json": "^10.2.5",
+    "@supabase/supabase-js": "^2.80.0",
+    "csv-parse": "^6.1.0",
+    "multiformats": "^13.4.1",
+    "tsx": "^4.20.6"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
